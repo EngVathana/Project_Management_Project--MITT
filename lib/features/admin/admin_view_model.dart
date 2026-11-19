@@ -36,7 +36,18 @@ class AdminViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  //
+  Future<void> save(Future<void> Function() action) async {
+    if (working) return;
+    working = true;
+    notifyListeners();
+    try {
+      await action();
+      if (!_disposed) reload();
+    } finally {
+      working = false;
+      if (!_disposed) notifyListeners();
+    }
+  }
 
   @override
   void dispose() {
